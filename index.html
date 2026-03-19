@@ -32,7 +32,7 @@
       position: relative;
       width: 100vw;
       height: 100vh;   /* fallback */
-      height: 100svh;  /* better on mobile browsers */
+      height: 100svh;  /* better on mobile */
       overflow: hidden;
       isolation: isolate;
       background: #000;
@@ -46,6 +46,8 @@
       transform: translate(-50%, -50%);
       width: max(100vw, calc((var(--ratio-w) / var(--ratio-h)) * 100vh));
       height: max(calc((var(--ratio-h) / var(--ratio-w)) * 100vw), 100vh);
+
+      /* ✅ If you renamed the file, update the path below */
       background: #000 url("/assets/landing.png") center center / 100% 100% no-repeat;
     }
 
@@ -58,6 +60,7 @@
       border-radius: 8px;
       outline: none;
       cursor: pointer;
+      touch-action: manipulation;
 
       /* width/height come from CSS vars so we can add mobile padding later */
       width: var(--w);
@@ -89,7 +92,7 @@
       }
     }
 
-    /* ====== Measure Mode UI ====== */
+    /* ====== Measure Mode UI (optional, press M) ====== */
     .measure-overlay { position: absolute; inset: 0; cursor: crosshair; display: none; z-index: 5; }
     .measure-box { position: absolute; border: 2px dashed #00aaff; background: rgba(0,170,255,.15); pointer-events: none; }
     .measure-hint {
@@ -118,28 +121,38 @@
     });
   </script>
 
-  <!-- Full-screen board -->
+  <!-- Full-screen board (cropping enabled) -->
   <section class="board" aria-label="Full-screen landing (cover)">
     <!-- Frame (keeps your image’s aspect ratio; covers viewport) -->
     <div class="frame" id="frame" role="img" aria-label="BM ARCH Planning & Services — Landing">
 
-      <!-- =================== HOTSPOTS ===================
-           Paste the measured values (from Measure Mode) into style=""
-           using this pattern: left:##.#%; top:##.#%; --w:##.#%; --h:##.#%;
-           All links point to /404 for now. -->
+      <!-- =================== HOTSPOTS (your exact values) =================== -->
+      <!-- All links point to /404 intentionally for the demo. Swap to real URLs anytime. -->
 
       <!-- NAV -->
-      <a class="hotspot" aria-label="Home"    href="/404" style="left:0%; top:0%; --w:0%; --h:0%;">Home</a>
-      <a class="hotspot" aria-label="Services" href="/404" style="left:0%; top:0%; --w:0%; --h:0%;">Services</a>
-      <a class="hotspot" aria-label="Product"  href="/404" style="left:0%; top:0%; --w:0%; --h:0%;">Product</a>
-      <a class="hotspot" aria-label="About"    href="/404" style="left:0%; top:0%; --w:0%; --h:0%;">About</a>
-      <a class="hotspot" aria-label="Contact"  href="/404" style="left:0%; top:0%; --w:0%; --h:0%;">Contact</a>
+      <a class="hotspot" href="/404" aria-label="Home"
+         style="left:58.1%; top:11.8%; --w:4.2%; --h:3.7%;">Home</a>
+
+      <a class="hotspot" href="/404" aria-label="Services"
+         style="left:64.7%; top:12.1%; --w:5.0%; --h:3.2%;">Services</a>
+
+      <a class="hotspot" href="/404" aria-label="Product"
+         style="left:73.1%; top:12.3%; --w:4.7%; --h:2.7%;">Product</a>
+
+      <a class="hotspot" href="/404" aria-label="About"
+         style="left:80.8%; top:11.9%; --w:4.1%; --h:3.1%;">About</a>
+
+      <a class="hotspot" href="/404" aria-label="Contact"
+         style="left:88.5%; top:12.1%; --w:4.8%; --h:2.8%;">Contact</a>
 
       <!-- CTAs -->
-      <a class="hotspot" aria-label="Get In Touch" href="/404" style="left:0%; top:0%; --w:0%; --h:0%;">Get In Touch</a>
-      <a class="hotspot" aria-label="Learn More"  href="/404" style="left:0%; top:0%; --w:0%; --h:0%;">Learn More</a>
+      <a class="hotspot" href="/404" aria-label="Get In Touch"
+         style="left:8.4%; top:77.5%; --w:14.3%; --h:5.6%;">Get In Touch</a>
 
-      <!-- ===== Measure Mode elements ===== -->
+      <a class="hotspot" href="/404" aria-label="Learn More"
+         style="left:23.4%; top:77.3%; --w:14.4%; --h:6.1%;">Learn More</a>
+
+      <!-- ===== Measure Mode elements (optional) ===== -->
       <div class="measure-overlay" id="measure"></div>
       <div class="measure-hint" id="measureHint">Measure mode ON — drag over a button. Press <strong>M</strong> to toggle, <strong>D</strong> to show hotspot boxes.</div>
       <div class="measure-output" id="measureOut"><span id="coords"></span><button id="copyBtn">Copy</button></div>
@@ -154,7 +167,7 @@
         document.documentElement.style.setProperty('--ratio-w', this.naturalWidth);
         document.documentElement.style.setProperty('--ratio-h', this.naturalHeight);
       };
-      img.src = '/assets/landing.png';
+      img.src = '/assets/landing.png'; // <-- update if your file has a different name
     })();
 
     // --- Measure Mode: press M to toggle; drag to get % coords relative to the FRAME ---
@@ -217,15 +230,10 @@
         const widthPct = (widthPx / rect.width) * 100;
         const heightPct = (heightPx / rect.height) * 100;
 
-        // Two useful strings:
-        const cssBox  = `left:${fmt(leftPct)}%; top:${fmt(topPct)}%; width:${fmt(widthPct)}%; height:${fmt(heightPct)}%;`;
         const cssVars = `left:${fmt(leftPct)}%; top:${fmt(topPct)}%; --w:${fmt(widthPct)}%; --h:${fmt(heightPct)}%;`;
-
-        // Show and copy the exact string you should paste into style=""
         coordsSpan.textContent = cssVars;
         try { navigator.clipboard.writeText(cssVars); } catch(e) {}
         console.log('Hotspot CSS (paste into style="…"): ', cssVars);
-
         alert('Copied to clipboard:\n' + cssVars + '\n\nPaste this into style="…" of the matching hotspot.');
       }
 
