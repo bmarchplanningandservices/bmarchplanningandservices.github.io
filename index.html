@@ -7,10 +7,10 @@
   <meta name="description" content="Full-screen landing (cover). Clickable hotspots for navigation and CTAs." />
   <style>
     :root{
-      /* Press "D" to toggle blue debug boxes over hotspots */
+      /* Toggle blue outlines for hotspots with the D key */
       --debug: off; /* on | off */
 
-      /* These will be set automatically by JS from your PNG's real size */
+      /* Will be set automatically from the PNG’s natural size */
       --ratio-w: 16;
       --ratio-h: 9;
 
@@ -23,16 +23,17 @@
       height: 100%;
       margin: 0;
       background: var(--page-bg);
-      overflow: hidden; /* single screen layout */
+      overflow: hidden; /* single-screen layout */
       font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
     }
 
-    /* Full viewport — we crop overflow to get true full-screen cover */
+    /* Full viewport — crop overflow for true cover */
     .board {
       position: relative;
       width: 100vw;
-      height: 100vh;
-      overflow: hidden; /* enables “cover crop” */
+      height: 100vh;   /* fallback */
+      height: 100svh;  /* better on mobile browsers */
+      overflow: hidden;
       isolation: isolate;
       background: #000;
     }
@@ -45,26 +46,27 @@
       transform: translate(-50%, -50%);
       width: max(100vw, calc((var(--ratio-w) / var(--ratio-h)) * 100vh));
       height: max(calc((var(--ratio-h) / var(--ratio-w)) * 100vw), 100vh);
-      /* Draw the PNG pixel-perfect inside the frame (no distortion within the frame) */
       background: #000 url("/assets/landing.png") center center / 100% 100% no-repeat;
     }
 
-    /* Hotspots are positioned *inside the frame* using % of the frame size */
+    /* Hotspots positioned INSIDE the frame (percent of the frame size) */
     .hotspot {
       position: absolute;
       display: block;
-      text-indent: -9999px; /* hide labels visually; still accessible */
+      text-indent: -9999px; /* hide visual label; keep accessible name */
       overflow: hidden;
       border-radius: 8px;
       outline: none;
       cursor: pointer;
-      /* For mobile tap comfort we can add extra padding using custom props --w/--h below */
-      width: var(--w); height: var(--h);
+
+      /* width/height come from CSS vars so we can add mobile padding later */
+      width: var(--w);
+      height: var(--h);
     }
     .hotspot:hover { box-shadow: inset 0 0 0 2px rgba(255,255,255,.25); }
     .hotspot:focus-visible { box-shadow: 0 0 0 4px rgba(255,255,255,.7); }
 
-    /* Blue debug boxes — press D to toggle */
+    /* Blue debug boxes (press D) */
     .hotspot::after {
       content: attr(aria-label);
       position: absolute; inset: 0;
@@ -87,7 +89,7 @@
       }
     }
 
-    /* ====== Measure Mode (press M): drag to read exact % coords relative to FRAME ====== */
+    /* ====== Measure Mode UI ====== */
     .measure-overlay { position: absolute; inset: 0; cursor: crosshair; display: none; z-index: 5; }
     .measure-box { position: absolute; border: 2px dashed #00aaff; background: rgba(0,170,255,.15); pointer-events: none; }
     .measure-hint {
@@ -118,37 +120,26 @@
 
   <!-- Full-screen board -->
   <section class="board" aria-label="Full-screen landing (cover)">
-    <!-- 16:9 (or your ratio) frame that covers the viewport -->
+    <!-- Frame (keeps your image’s aspect ratio; covers viewport) -->
     <div class="frame" id="frame" role="img" aria-label="BM ARCH Planning & Services — Landing">
+
       <!-- =================== HOTSPOTS ===================
-           STEP A: leave these as-is for now.
-           STEP B: After measuring, replace the left/top/width/height values.
-           All links point to /404 on purpose until you give me real URLs. -->
+           Paste the measured values (from Measure Mode) into style=""
+           using this pattern: left:##.#%; top:##.#%; --w:##.#%; --h:##.#%;
+           All links point to /404 for now. -->
 
       <!-- NAV -->
-      <a class="hotspot" href="/404" aria-label="Home"
-         style="left:0%; top:0%; --w:0%; --h:0%; width:var(--w); height:var(--h);"></a>
-
-      <a class="hotspot" href="/404" aria-label="Services"
-         style="left:0%; top:0%; --w:0%; --h:0%; width:var(--w); height:var(--h);"></a>
-
-      <a class="hotspot" href="/404" aria-label="Product"
-         style="left:0%; top:0%; --w:0%; --h:0%; width:var(--w); height:var(--h);"></a>
-
-      <a class="hotspot" href="/404" aria-label="About"
-         style="left:0%; top:0%; --w:0%; --h:0%; width:var(--w); height:var(--h);"></a>
-
-      <a class="hotspot" href="/404" aria-label="Contact"
-         style="left:0%; top:0%; --w:0%; --h:0%; width:var(--w); height:var(--h);"></a>
+      <a class="hotspot" aria-label="Home"    href="/404" style="left:0%; top:0%; --w:0%; --h:0%;">Home</a>
+      <a class="hotspot" aria-label="Services" href="/404" style="left:0%; top:0%; --w:0%; --h:0%;">Services</a>
+      <a class="hotspot" aria-label="Product"  href="/404" style="left:0%; top:0%; --w:0%; --h:0%;">Product</a>
+      <a class="hotspot" aria-label="About"    href="/404" style="left:0%; top:0%; --w:0%; --h:0%;">About</a>
+      <a class="hotspot" aria-label="Contact"  href="/404" style="left:0%; top:0%; --w:0%; --h:0%;">Contact</a>
 
       <!-- CTAs -->
-      <a class="hotspot" href="/404" aria-label="Get In Touch"
-         style="left:0%; top:0%; --w:0%; --h:0%; width:var(--w); height:var(--h);"></a>
+      <a class="hotspot" aria-label="Get In Touch" href="/404" style="left:0%; top:0%; --w:0%; --h:0%;">Get In Touch</a>
+      <a class="hotspot" aria-label="Learn More"  href="/404" style="left:0%; top:0%; --w:0%; --h:0%;">Learn More</a>
 
-      <a class="hotspot" href="/404" aria-label="Learn More"
-         style="left:0%; top:0%; --w:0%; --h:0%; width:var(--w); height:var(--h);"></a>
-
-      <!-- ===== Measure Mode UI (press M) ===== -->
+      <!-- ===== Measure Mode elements ===== -->
       <div class="measure-overlay" id="measure"></div>
       <div class="measure-hint" id="measureHint">Measure mode ON — drag over a button. Press <strong>M</strong> to toggle, <strong>D</strong> to show hotspot boxes.</div>
       <div class="measure-output" id="measureOut"><span id="coords"></span><button id="copyBtn">Copy</button></div>
@@ -156,7 +147,7 @@
   </section>
 
   <script>
-    // Auto-detect the image's real width/height and set the ratio CSS variables
+    // Auto-detect the PNG’s natural size and set aspect-ratio variables
     (function(){
       const img = new Image();
       img.onload = function(){
@@ -166,7 +157,7 @@
       img.src = '/assets/landing.png';
     })();
 
-    // --- Measure Mode: press M to toggle; drag to get % coords relative to FRAME ---
+    // --- Measure Mode: press M to toggle; drag to get % coords relative to the FRAME ---
     (function(){
       const frame = document.getElementById('frame');
       const overlay = document.getElementById('measure');
@@ -215,8 +206,8 @@
         const bottom = Math.min(rect.bottom, y2);
 
         box.style.left = (left - rect.left) + 'px';
-        box.style.top = (top - rect.top) + 'px';
-        box.style.width = Math.max(0, right - left) + 'px';
+        box.style.top = (top  - rect.top ) + 'px';
+        box.style.width  = Math.max(0, right - left) + 'px';
         box.style.height = Math.max(0, bottom - top) + 'px';
       });
 
@@ -225,19 +216,25 @@
         const topPct = (topPx / rect.height) * 100;
         const widthPct = (widthPx / rect.width) * 100;
         const heightPct = (heightPx / rect.height) * 100;
-        const css = `left:${fmt(leftPct)}%; top:${fmt(topPct)}%; width:${fmt(widthPct)}%; height:${fmt(heightPct)}%;`;
-        coordsSpan.textContent = css;
-        copyBtn.onclick = () => { navigator.clipboard.writeText(css); };
-        console.log('Hotspot CSS →', css);
-        alert('Copy these into style="left:…; top:…; --w:…; --h:…;" (Set --w to width and --h to height)');
+
+        // Two useful strings:
+        const cssBox  = `left:${fmt(leftPct)}%; top:${fmt(topPct)}%; width:${fmt(widthPct)}%; height:${fmt(heightPct)}%;`;
+        const cssVars = `left:${fmt(leftPct)}%; top:${fmt(topPct)}%; --w:${fmt(widthPct)}%; --h:${fmt(heightPct)}%;`;
+
+        // Show and copy the exact string you should paste into style=""
+        coordsSpan.textContent = cssVars;
+        try { navigator.clipboard.writeText(cssVars); } catch(e) {}
+        console.log('Hotspot CSS (paste into style="…"): ', cssVars);
+
+        alert('Copied to clipboard:\n' + cssVars + '\n\nPaste this into style="…" of the matching hotspot.');
       }
 
       overlay.addEventListener('mouseup', (e) => {
         if (!start || !box) return;
         const rect = start.rect;
-        const leftPx = parseFloat(box.style.left) || 0;
-        const topPx = parseFloat(box.style.top) || 0;
-        const widthPx = parseFloat(box.style.width) || 0;
+        const leftPx   = parseFloat(box.style.left)   || 0;
+        const topPx    = parseFloat(box.style.top)    || 0;
+        const widthPx  = parseFloat(box.style.width)  || 0;
         const heightPx = parseFloat(box.style.height) || 0;
         updateOutput(leftPx, topPx, widthPx, heightPx, rect);
         start = null;
