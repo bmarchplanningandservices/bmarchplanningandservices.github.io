@@ -1,1 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BM ARCH Planning & Services</title>
+  <meta name="description" content="Full-screen landing (cover). Clickable hotspots for navigation and CTAs." />
+  <style>
+    :root{
+      /* Press "D" to toggle blue debug boxes over hotspots */
+      --debug: off; /* on | off */
 
+      /* These will be set automatically by JS from your PNG's real size */
+      --ratio-w: 16;
+      --ratio-h: 9;
+
+      --page-bg: #000;   /* visible only during first paint */
+      --touch-pad: 0;    /* extra mobile tap padding (%) */
+    }
+
+    * { box-sizing: border-box; }
+    html, body {
+      height: 100%;
+      margin: 0;
+      background: var(--page-bg);
+      overflow: hidden; /* single screen layout */
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    /* Full viewport — we crop overflow to get true full-screen cover */
+    .board {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden; /* enables “cover crop” */
+      isolation: isolate;
+      background: #000;
+    }
+
+    /* FRAME: your original canvas, scaled to COVER the viewport */
+    .frame {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: max(100vw, calc((var(--ratio-w) / var(--ratio-h)) * 100vh));
+      height: max(calc((var(--ratio-h) / var(--ratio-w)) * 100vw), 100vh);
+      /* Draw the PNG pixel-perfect inside the frame (no distortion within the frame) */
+      background: #000 url("/assets/landing.png") center center / 100% 100% no-repeat;
+    }
+
+    /* Hotspots are positioned *inside the frame* using % of the frame size */
+    .hotspot {
+      position: absolute;
+      display: block;
+      text-indent: -9999px; /* hide labels visually; still accessible */
+      overflow: hidden;
+      border-radius: 8px;
+      outline: none;
+      cursor: pointer;
+      /* For mobile tap comfort we can add extra padding using custom props --w/--h below */
+      width: var(--w); height: var(--h);
+    }
+    .hotspot:hover { box-shadow: inset 0 0 0 2px rgba(255,255,255,.25); }
+    .hotspot:focus-visible { box-shadow: 0 0 0 4px rgba(255,255,255,.7); }
+
+    /* Blue debug boxes — press D to toggle */
+    .hotspot::after {
+      content: attr(aria-label);
+      position: absolute; inset: 0;
+      display: none;
+      background: rgba(0,150,255,.18);
+      border: 2px dashed rgba(0,150,255,.9);
+      color: #003a66; font-weight: 700; font-size: 12px;
+      line-height: 1; padding: 6px;
+    }
+    html[data-debug="on"] .hotspot::after { display: block; }
+
+    /* Friendlier tap targets on small screens (adds a little invisible padding) */
+    @media (max-width: 640px) {
+      :root { --touch-pad: 0.6; } /* ~0.6% around each hotspot */
+      .hotspot {
+        margin-left:  calc(-1 * var(--touch-pad));
+        margin-top:   calc(-1 * var(--touch-pad));
+        width:  calc(var(--w) + 2 * var(--touch-pad));
+        height: calc(var(--h) + 2 * var(--touch-pad));
+      }
+    }
+
+    /* ====== Measure Mode (press M): drag to read exact % coords relative to FRAME ====== */
+    .measure-overlay { position: absolute; inset: 0; cursor: crosshair; display: none; z-index: 5; }
+    .measure-box { position: absolute; border: 2px dashed #00aaff; background: rgba(0,170,255,.15); pointer-events: none; }
+    .measure-hint {
+      position: absolute; top: 8px; left: 8px; z-index: 6;
+      background: rgba(0,0,0,.65); color: #fff; padding: 6px 10px; border-radius: 8px; font-size: 12px;
+      display: none;
+    }
+    .measure-output {
+      position: absolute; bottom: 8px; left: 8px; z-index: 6;
+      background: rgba(0,0,0,.65); color: #fff; padding: 6px 10px; border-radius: 8px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; font-size: 12px;
+      display: none;
+    }
+    .measure-output button { margin-left: 8px; }
+  </style>
+</head>
+<body>
+  <!-- Keyboard toggles -->
+  <script>
+    // D = toggle debug overlay for hotspots
+    document.addEventListener('keydown', (e) => {
+      if ((e.key === 'd' || e.key === 'D') && !e.ctrlKey && !e.metaKey) {
+        const html = document.documentElement;
+        html.setAttribute('data-debug', html.getAttribute('data-debug') === 'on' ? 'off' : 'on');
+      }
+    });
+  </script>
+
+  <!-- Full-screen board -->
+  <section class="board" aria-label="Full-screen landing (cover)">
+    <!-- 16:9 (or your ratio) frame that covers the viewport -->
+    <div class="frame" id="frame" role="img" aria-label="BM ARCH Planning & Services — Landing">
+      <!-- =================== HOTSPOTS ===================
+           STEP A: leave these as-is for now.
+           STEP B: After measuring, replace the left/top/width/height values.
+           All links point to /404 on purpose until you give me real URLs. -->
+
+      <!-- NAV -->
+      <a class="hotspot" href="/404" aria-label="Home"
+         style="left:0%; top:0%; --w:0%; --h:0%; width:var(--w); height:var(--h);"></a>
+
+      <a class="hotspot" href="/404" aria-label="Services"
+         style="left:0%; top:0%; --w:0%; --h:0%; width:var(--w); height:var(--h);"></a>
+
+      <a class="hotspot" href="/404" aria-label="Product"
+         style="left:0%; top:0%; --w:0%; --h:0%; width:var(--w); height:var(--h);"></a>
+
+      <a class="hotspot" href="/404" aria-label="About"
+         style="left:0%; top:0%; --w:0%; --h:0%; width:var(--w); height:var(--h);"></a>
+
+      <a class="hotspot" href="/404" aria-label="Contact"
+         style="left:0%; top:0%; --w:0%; --h:0%; width:var(--w); height:var(--h);"></a>
+
+      <!-- CTAs -->
+      <a class="hotspot" href="/404" aria-label="Get In Touch"
+         style="left:0%; top:0%; --w:0%; --h:0%; width:var(--w); height:var(--h);"></a>
+
+      <a class="hotspot" href="/404" aria-label="Learn More"
+         style="left:0%; top:0%; --w:0%; --h:0%; width:var(--w); height:var(--h);"></a>
+
+      <!-- ===== Measure Mode UI (press M) ===== -->
+      <div class="measure-overlay" id="measure"></div>
+      <div class="measure-hint" id="measureHint">Measure mode ON — drag over a button. Press <strong>M</strong> to toggle, <strong>D</strong> to show hotspot boxes.</div>
+      <div class="measure-output" id="measureOut"><span id="coords"></span><button id="copyBtn">Copy</button></div>
+    </div>
+  </section>
+
+  <script>
+    // Auto-detect the image's real width/height and set the ratio CSS variables
+    (function(){
+      const img = new Image();
+      img.onload = function(){
+        document.documentElement.style.setProperty('--ratio-w', this.naturalWidth);
+        document.documentElement.style.setProperty('--ratio-h', this.naturalHeight);
+      };
+      img.src = '/assets/landing.png';
+    })();
+
+    // --- Measure Mode: press M to toggle; drag to get % coords relative to FRAME ---
+    (function(){
+      const frame = document.getElementById('frame');
+      const overlay = document.getElementById('measure');
+      const hint = document.getElementById('measureHint');
+      const out = document.getElementById('measureOut');
+      const coordsSpan = document.getElementById('coords');
+      const copyBtn = document.getElementById('copyBtn');
+      let on = false, start = null, box = null;
+
+      function fmt(n){ return (Math.round(n * 10) / 10).toFixed(1); } // 1 decimal
+
+      function enableMeasure(v){
+        on = v;
+        overlay.style.display = v ? 'block' : 'none';
+        hint.style.display = v ? 'block' : 'none';
+        out.style.display = v ? 'flex' : 'none';
+        if (!v && box) { box.remove(); box = null; }
+      }
+
+      document.addEventListener('keydown', (e) => {
+        if ((e.key === 'm' || e.key === 'M') && !e.ctrlKey && !e.metaKey) {
+          enableMeasure(!on);
+        }
+      });
+
+      overlay.addEventListener('mousedown', (e) => {
+        const rect = frame.getBoundingClientRect();
+        start = { x: e.clientX, y: e.clientY, rect };
+        if (box) box.remove();
+        box = document.createElement('div');
+        box.className = 'measure-box';
+        frame.appendChild(box);
+      });
+
+      overlay.addEventListener('mousemove', (e) => {
+        if (!start || !box) return;
+        const x1 = Math.min(start.x, e.clientX);
+        const y1 = Math.min(start.y, e.clientY);
+        const x2 = Math.max(start.x, e.clientX);
+        const y2 = Math.max(start.y, e.clientY);
+        const rect = start.rect;
+
+        const left = Math.max(rect.left, x1);
+        const top = Math.max(rect.top, y1);
+        const right = Math.min(rect.right, x2);
+        const bottom = Math.min(rect.bottom, y2);
+
+        box.style.left = (left - rect.left) + 'px';
+        box.style.top = (top - rect.top) + 'px';
+        box.style.width = Math.max(0, right - left) + 'px';
+        box.style.height = Math.max(0, bottom - top) + 'px';
+      });
+
+      function updateOutput(leftPx, topPx, widthPx, heightPx, rect){
+        const leftPct = (leftPx / rect.width) * 100;
+        const topPct = (topPx / rect.height) * 100;
+        const widthPct = (widthPx / rect.width) * 100;
+        const heightPct = (heightPx / rect.height) * 100;
+        const css = `left:${fmt(leftPct)}%; top:${fmt(topPct)}%; width:${fmt(widthPct)}%; height:${fmt(heightPct)}%;`;
+        coordsSpan.textContent = css;
+        copyBtn.onclick = () => { navigator.clipboard.writeText(css); };
+        console.log('Hotspot CSS →', css);
+        alert('Copy these into style="left:…; top:…; --w:…; --h:…;" (Set --w to width and --h to height)');
+      }
+
+      overlay.addEventListener('mouseup', (e) => {
+        if (!start || !box) return;
+        const rect = start.rect;
+        const leftPx = parseFloat(box.style.left) || 0;
+        const topPx = parseFloat(box.style.top) || 0;
+        const widthPx = parseFloat(box.style.width) || 0;
+        const heightPx = parseFloat(box.style.height) || 0;
+        updateOutput(leftPx, topPx, widthPx, heightPx, rect);
+        start = null;
+      });
+    })();
+  </script>
+</body>
+</html>
